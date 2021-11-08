@@ -4,10 +4,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:test_notifications/services/push_notification_service.dart';
 
-void main() {
-  Firebase.initializeApp();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   FirebaseAnalytics analytics = FirebaseAnalytics();
+
   runApp(const MyApp());
 }
 
@@ -65,6 +68,24 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    FirebaseMessaging.onMessage.listen((event) {
+      print('qwe:::');
+      print('OnMessage ${event.data}');
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((event) {
+      print(':::qwe');
+      print('onMessageOpenedApp ${event.data}');
+    });
+
+    PushNotificationService pushNotificationService = PushNotificationService();
+    pushNotificationService.initialise();
+  }
 
   void _incrementCounter() {
     setState(() {

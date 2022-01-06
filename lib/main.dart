@@ -4,12 +4,30 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:test_notifications/services/push_notification_service.dart';
+import 'package:test_notifications/red_page.dart';
+import 'package:test_notifications/services/local_notification_service.dart';
+
+import 'green_page.dart';
+
+Future<void> backGroundHandler(RemoteMessage message) async{
+  print(message.data.toString());
+  print(message.notification?.title);
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  LocalNotificationService.initialize();
   await Firebase.initializeApp();
-  FirebaseAnalytics analytics = FirebaseAnalytics();
+  FirebaseMessaging.onBackgroundMessage(backGroundHandler);
+  // FirebaseAnalytics analytics = FirebaseAnalytics();
+  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //   print('Got a message whilst in the foreground!');
+  //   print('Message data: ${message.data}');
+  //
+  //   if (message.notification != null) {
+  //     print('Message also contained a notification: ${message.notification}');
+  //   }
+  // });
 
   runApp(const MyApp());
 }
@@ -44,6 +62,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      routes: {
+        "red": (_) => RedPage(),
+        "green": (_) => GreenPage(),
+      },
     );
   }
 }
@@ -73,18 +95,36 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    FirebaseMessaging.onMessage.listen((event) {
-      print('qwe:::');
-      print('OnMessage ${event.data}');
+
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if(message != null) {
+        final routeFromMessage = message.data["route"];
+
+        Navigator.of(context).pushNamed(routeFromMessage);
+
+        print(routeFromMessage);
+      }
     });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      print(':::qwe');
-      print('onMessageOpenedApp ${event.data}');
+    FirebaseMessaging.onMessage.listen((message) {
+      if(message.notification != null) {
+        print(message.notification!.body);
+        print(message.notification!.title);
+      }
+
+      LocalNotificationService.display(message);
     });
 
-    PushNotificationService pushNotificationService = PushNotificationService();
-    pushNotificationService.initialise();
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      final routeFromMessage = message.data["route"];
+
+      Navigator.of(context).pushNamed(routeFromMessage);
+
+      print(routeFromMessage);
+    });
+
+    // PushNotificationService pushNotificationService = PushNotificationService();
+    // pushNotificationService.initialise();
   }
 
   void _incrementCounter() {

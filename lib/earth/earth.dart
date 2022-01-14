@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cube/flutter_cube.dart';
 import 'package:flutter_earth/flutter_earth.dart';
 import 'package:model_viewer/model_viewer.dart';
 
@@ -7,24 +8,141 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Object _earth;
+  late Scene _scene;
+  late double _earthRotationY;
+  late Vector2 startMove;
+  late Vector2 updateMove;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _earth = Object(
+      fileName: 'res/3d_model/earth.obj',
+      scale: Vector3(5.0, 5.0, 5.0),
+      // rotation: Vector3(9999, 9999, 9999)
+    );
+    _controller = AnimationController(
+        duration: Duration(milliseconds: 30000), vsync: this)
+      ..addListener(() {
+        if (_earth != null) {
+          _earth.rotation.y = _earthRotationY;
+          _earthRotationY = _controller.value * 360;
+          _earth.updateTransform();
+          _scene.update();
+        }
+      })
+      ..repeat();
+    _earthRotationY = _controller.value * 360;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onSceneCreated(Scene scene) {
+    _scene = scene;
+
+    // scene.camera;
+    scene.world.add(_earth);
+    scene.camera;
+    _earth.updateTransform();
+    print(scene.world.children.first);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: Text("Model Viewer")),
-        body: ModelViewer(
-          src: 'res/3d_model/earth.glb',
-          alt: "A 3D model of an astronaut",
-          // ar: true,
-          autoRotate: true,
-          cameraControls: true,
+        body: Center(
+          child: GestureDetector(
+            onHorizontalDragStart: (_) {
+              _controller.stop();
+              startMove = Vector2(_.globalPosition.dx, _.globalPosition.dy);
+            },
+            onHorizontalDragUpdate: (_) {
+              updateMove = Vector2(_.delta.dx, _.delta.dy);
+              _earth.rotation.y = _earth.rotation.y + _.delta.dx / 3;
+              _earth.updateTransform();
+              // _scene.camera.position.setValues(_scene.camera.position.x + _.delta.dx, 0, 0);
+              _scene.update();
+              _controller.value = _earth.rotation.y / 360;
+              _controller.stop();
+            },
+
+            onHorizontalDragEnd: (_) {
+              Future.delayed(Duration(milliseconds: 1000)).then((value) {
+                _controller..forward()..repeat();
+
+              });
+            },
+            // onLongPress: () {
+            //   _controller.stop();
+            //
+            //   // Future.delayed(Duration(milliseconds: 500)).then((value) {
+            //   //   _controller.forward();
+            //   // });
+            // },
+            // onTap: () {
+            //   _controller.stop();
+            // },
+            // onTapCancel: () {
+            //   _controller..forward()..repeat();
+            // },
+
+            // onScaleUpdate: (_) {
+            //   print("qwe");
+            //   // _scene.camera.trackBall(_.scale., to)
+            // },
+            //
+            // onTapDown: (_) {
+            //   _controller
+            //     ..forward()
+            //     ..repeat();
+            // },
+            // // onHorizontalDragStart: (_) {
+            // //   _scene.camera.trackBall(
+            // //     Vector2(_.),
+            // //     Vector2(0, 0),
+            // //   );
+            // // },
+            // onLongPressMoveUpdate: (_) {
+            //   _controller.stop();
+            // },
+            // onLongPressUp: () {
+            //   Future.delayed(Duration(milliseconds: 500)).then((value) {
+            //     _controller.forward();
+            //   });
+            // },
+            child: Cube(onSceneCreated: _onSceneCreated),
+          ),
         ),
       ),
     );
+    // return MaterialApp(
+    //   home: Scaffold(
+    //     appBar: AppBar(title: Text("Model Viewer")),
+    //     body: ModelViewer(
+    //       src: 'res/3d_model/earth.glb',
+    //       alt: "A 3D model of an astronaut",
+    //       // ar: true,
+    //       autoRotate: true,
+    //       cameraControls: true,
+    //     ),
+    //   ),
+    // );
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -87,14 +205,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
-        body: Center(
-          child: FlutterEarth(
-            url: 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}',
-            radius: 180,
-          ),
+    return Scaffold(
+      body: Center(
+        child: FlutterEarth(
+          url: 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}',
+          radius: 180,
         ),
-      );
+      ),
+    );
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //

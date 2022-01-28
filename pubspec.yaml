@@ -50,6 +50,8 @@ dependencies:
   flutter_cube: ^0.1.1
   matrix_gesture_detector: ^0.1.0
   photo_view: ^0.13.0
+  flutter_svg: ^1.0.3
+
 
 dev_dependencies:
   flutter_test:
@@ -83,6 +85,8 @@ flutter:
     - res/3d_model/flutter10.png
     - res/3d_model/lines.png
     - res/3d_model/flutter.svg
+    - res/bihance_pic/graph_green.svg
+    - res/bihance_pic/graph_blue.svg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

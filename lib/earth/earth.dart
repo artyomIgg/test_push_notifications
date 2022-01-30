@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cube/flutter_cube.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/parser.dart';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
-// import 'package:flutter_earth/flutter_earth.dart';
-import 'package:model_viewer/model_viewer.dart';
 import 'package:photo_view/photo_view.dart';
 
 void main() async {
@@ -21,6 +18,23 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    // final size = MediaQuery.of(context).size;
+    return MaterialApp(
+      home: SafeArea(child: Home()),
+    );
+  }
+}
+
+class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
+
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> with TickerProviderStateMixin {
   late AnimationController _controller;
   late AnimationController _earthSizeAnimationController;
   late AnimationController _earthDoubleTapSizeController;
@@ -40,6 +54,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   Color cardGradientSecondBlue = Color(0xff182848);
   Color textCountColorGreen = Color(0xff88F9BA);
   Color textCountColorBlue = Color(0xffBFE9F8);
+  Color bottomNavBarColor = Color(0xff191C1A);
   bool isTap = false;
   // bool isDoubleTap = false;
 
@@ -107,6 +122,9 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   }
 
   @override
+  trackBall() {}
+
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
@@ -124,10 +142,10 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SafeArea(
-        child: Scaffold(
-          body: Container(
+    return Scaffold(
+      body: Stack(
+        children: [
+          Container(
             height: double.infinity,
             width: double.infinity,
             color: backgroundColor,
@@ -281,23 +299,21 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                                   "Plants",
                                   "256k",
                                   "+4% of target",
-                                "res/bihance_pic/graph_green.svg",
-                                textCountColorGreen
-                              ),
+                                  "res/bihance_pic/graph_green.svg",
+                                  textCountColorGreen),
                             ),
                             SizedBox(
                               width: 16,
                             ),
                             Expanded(
                                 child: smallCardInfo(
-                              cardGradientFirstBlue,
-                              cardGradientSecondBlue,
-                              "Users",
-                              "128k",
-                              "+22% of target",
-                                  "res/bihance_pic/graph_blue.svg",
-                                  textCountColorBlue
-                            )),
+                                    cardGradientFirstBlue,
+                                    cardGradientSecondBlue,
+                                    "Users",
+                                    "128k",
+                                    "+22% of target",
+                                    "res/bihance_pic/graph_blue.svg",
+                                    textCountColorBlue)),
                             Container(),
                           ],
                         )),
@@ -306,7 +322,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                         child: Row(
                           children: [
                             Container(
-                              color: Colors.white,
+                              color: Colors.transparent,
                               height: 190,
                               width: 200,
                             ),
@@ -321,7 +337,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                         child: Row(
                           children: [
                             Container(
-                              color: Colors.white,
+                              color: Colors.transparent,
                               height: 190,
                               width: 200,
                             ),
@@ -336,10 +352,100 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
               ),
             ),
           ),
-        ),
+          Positioned(bottom: 0, left: 0, child: bottomNavBar(context))
+        ],
       ),
     );
   }
+}
+
+Widget bottomNavBar(BuildContext context) {
+  final size = MediaQuery.of(context).size;
+  return Container(
+    width: size.width,
+    height: 110,
+    // color: Colors.white,
+    child: Stack(
+      children: [
+        // SvgPicture.asset("res/bihance_pic/bottom_nav_bar.svg", fit: BoxFit.fill,),
+        CustomPaint(
+          size: Size(size.width, 110),
+          painter: BNBCustomPainter(),
+        ),
+        Center(
+            heightFactor: 0,
+            child: Transform.rotate(
+              angle: -math.pi / 4,
+              child: Container(
+                height: 56,
+                width: 56,
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(Icons.close),
+              ),
+            )),
+        Container(
+          width: size.width,
+          height: 80,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    "res/bihance_pic/icons/home.svg",
+                    height: 24,
+                    width: 24,
+                  ),
+                  Text("Home", style: TextStyle(fontSize: 16))
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    "res/bihance_pic/icons/search.svg",
+                    height: 24,
+                    width: 24,
+                  ),
+                  Text("Search", style: TextStyle(fontSize: 16))
+                ],
+              ),
+              SizedBox(
+                width: size.width * 0.20,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    "res/bihance_pic/icons/rating.svg",
+                    height: 24,
+                    width: 24,
+                  ),
+                  Text("Rating", style: TextStyle(fontSize: 16))
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    "res/bihance_pic/icons/profile.svg",
+                    height: 24,
+                    width: 24,
+                  ),
+                  Text("Profile", style: TextStyle(fontSize: 16))
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 Widget smallCardInfo(Color firstColor, Color secondColor, String title,
@@ -362,18 +468,32 @@ Widget smallCardInfo(Color firstColor, Color secondColor, String title,
         children: [
           Row(
             children: [
-              Text(title, style: TextStyle(fontSize: 18, color: Colors.white),),
+              Text(
+                title,
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
             ],
           ),
-          SizedBox(height: 14,),
+          SizedBox(
+            height: 14,
+          ),
           Row(
             children: [
-              Text(count, style: TextStyle(fontSize: 34, color: Colors.white, fontWeight: FontWeight.w700),),
+              Text(
+                count,
+                style: TextStyle(
+                    fontSize: 34,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700),
+              ),
             ],
           ),
           Row(
             children: [
-              Text(target, style: TextStyle(fontSize: 16, color: textColor),),
+              Text(
+                target,
+                style: TextStyle(fontSize: 16, color: textColor),
+              ),
             ],
           ),
           Expanded(
@@ -434,4 +554,37 @@ Future<Mesh> generateSphereMesh(
       texture: texture,
       texturePath: texturePath);
   return mesh;
+}
+
+class BNBCustomPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    Path path = Path()..moveTo(0, 10);
+    path.quadraticBezierTo(size.width * 0.0, 10, size.width * 0.0, 25);
+    path.quadraticBezierTo(size.width * 0.0, 10, size.width * 0.06, 10);
+    path.quadraticBezierTo(size.width * 0.12, 10, size.width * 0.36, 10);
+    path.quadraticBezierTo(size.width * 0.4, 10, size.width * 0.44, 30);
+    path.quadraticBezierTo(size.width * 0.44, 30, size.width * 0.465, 40);
+    path.quadraticBezierTo(size.width * 0.48, 44, size.width * 0.50, 44);
+    path.quadraticBezierTo(size.width * 0.51, 44, size.width * 0.52, 43);
+    path.quadraticBezierTo(size.width * 0.54, 40, size.width * 0.56, 30);
+    path.quadraticBezierTo(size.width * 0.6, 10, size.width * 0.64, 10);
+    path.quadraticBezierTo(size.width * 0.8, 10, size.width * 0.94, 10);
+    path.quadraticBezierTo(size.width * 1, 10, size.width * 1, 25);
+    path.quadraticBezierTo(size.width * 1, 25, size.width * 1, 25);
+
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+    canvas.drawShadow(path, Colors.black, 5, true);
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
+  }
 }

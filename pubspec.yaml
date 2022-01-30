@@ -47,10 +47,11 @@ dependencies:
   permission_handler: ^7.0.0
   flutter_earth: ^0.0.4
   model_viewer: ^0.8.1
-  flutter_cube: ^0.1.1
   matrix_gesture_detector: ^0.1.0
   photo_view: ^0.13.0
   flutter_svg: ^1.0.3
+  flutter_cube:
+    path: ./flutter_cube_0.1.1_override
 
 
 dev_dependencies:
@@ -83,10 +84,15 @@ flutter:
     - res/3d_model/earth.png
     - res/3d_model/flutter8.png
     - res/3d_model/flutter10.png
-    - res/3d_model/lines.png
+#    - res/3d_model/lines.png
     - res/3d_model/flutter.svg
     - res/bihance_pic/graph_green.svg
     - res/bihance_pic/graph_blue.svg
+    - res/bihance_pic/bottom_nav_bar.svg
+    - res/bihance_pic/icons/home.svg
+    - res/bihance_pic/icons/profile.svg
+    - res/bihance_pic/icons/rating.svg
+    - res/bihance_pic/icons/search.svg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

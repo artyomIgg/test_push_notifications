@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cube/flutter_cube.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -61,6 +63,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   Color cardGradientSecondBlue = Color(0xff182848);
   Color textCountColorBlue = Color(0xffBFE9F8);
   bool isTap = false;
+
+  late Timer _earthRotationTimer;
+  late Timer _earthZoomTimer;
   // bool isDoubleTap = false;
 
   void generateSphereObject(Object parent, String name, double radius,
@@ -124,6 +129,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     // });
 
     _earthRotationY = _controller.value * 360;
+
+    _earthRotationTimer = Timer(Duration(seconds: 3) , () {
+      _controller.forward();
+    });
+    _earthZoomTimer = Timer(Duration(seconds: 5), () {
+      _earthDoubleTapSizeController.reverse();
+    });
   }
 
   @override
@@ -204,14 +216,48 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
                         onPanUpdate: (_) {},
 
-                        onLongPress: () {
+                        onLongPressStart: (_) {
                           _controller.stop();
                           _earthDoubleTapSizeController.forward();
                         },
 
-                        onLongPressUp: () {
-                          _controller.forward();
-                          _earthDoubleTapSizeController.reverse();
+                        onLongPress: () {
+                          _earthZoomTimer.cancel();
+                          _earthRotationTimer.cancel();
+                        },
+
+                        onHorizontalDragUpdate: (_) {
+                          _controller.stop();
+                          _earthZoomTimer.cancel();
+                          _earthRotationTimer.cancel();
+                          updateMove = Vector2(_.delta.dx, _.delta.dy);
+                          _earth.rotation.y =
+                              _earth.rotation.y + _.delta.dx / 2;
+                          _earth.updateTransform();
+                          // _scene.camera.position.setValues(_scene.camera.position.x + _.delta.dx, 0, 0);
+                          _scene.update();
+                          if (_earth.rotation.y <= 0) {
+                            _controller.value =
+                                (_earth.rotation.y + 360) / 360;
+                          } else if (_earth.rotation.y >= 360) {
+                            _controller.value =
+                                (_earth.rotation.y - 360) / 360;
+                          } else
+                            _controller.value = _earth.rotation.y / 360;
+                        },
+
+                        // onLongPress: () {
+                        //   _controller.stop();
+                        //   _earthDoubleTapSizeController.forward();
+                        // },
+
+                        onLongPressUp: () async {
+                          // _controller.forward();
+                          _startEarthZoomTimer();
+                          _startEarthRotationTimer();
+                          // await Future.delayed(Duration(milliseconds: 5000)).then((value) {
+                          //   _earthDoubleTapSizeController.reverse();
+                          // });
                         },
 
                         // onLong
@@ -238,22 +284,40 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                               print("onPointerHover");
                             },
                             onPointerDown: (_) {
-                              setState(() {
-                                _controller.stop();
-                              });
+                              _earthZoomTimer.cancel();
+                              _earthRotationTimer.cancel();
                             },
                             onPointerMove: (_) {
-                              setState(() {
-                                _controller.stop();
-                              });
+                              // setState(() {
+                              //   _controller.stop();
+                              // });
+                              _earthZoomTimer.cancel();
+                              _earthRotationTimer.cancel();
+                              updateMove = Vector2(_.delta.dx, _.delta.dy);
+                              _earth.rotation.y =
+                                  _earth.rotation.y + _.delta.dx / 2;
+                              _earth.updateTransform();
+                              // _scene.camera.position.setValues(_scene.camera.position.x + _.delta.dx, 0, 0);
+                              _scene.update();
+                              if (_earth.rotation.y <= 0) {
+                                _controller.value =
+                                    (_earth.rotation.y + 360) / 360;
+                              } else if (_earth.rotation.y >= 360) {
+                                _controller.value =
+                                    (_earth.rotation.y - 360) / 360;
+                              } else
+                                _controller.value = _earth.rotation.y / 360;
                             },
                             onPointerUp: (_) {
-                              Future.delayed(Duration(milliseconds: 2000))
-                                  .then((value) {
-                                _controller
-                                  ..forward()
-                                  ..repeat();
-                              });
+                              _startEarthRotationTimer();
+                              _startEarthZoomTimer();
+                              _earthZoomTimer;
+                              // Future.delayed(Duration(milliseconds: 2000))
+                              //     .then((value) {
+                              //   _controller
+                              //     ..forward()
+                              //     ..repeat();
+                              // });
                             },
                             child: Stack(
                               children: [
@@ -338,6 +402,22 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       ),
     );
   }
+
+  void _startEarthRotationController() {
+    _controller.forward();
+  }
+
+  void _startEarthRotationTimer() {
+    _earthRotationTimer = Timer(Duration(seconds: 3) , () {
+      _controller..forward()..repeat();
+    });
+  }
+
+  void _startEarthZoomTimer() {
+    _earthZoomTimer = Timer(Duration(seconds: 3), () {
+      _earthDoubleTapSizeController.reverse();
+    });
+  }
 }
 
 Widget areasAttention(BuildContext context) {
@@ -359,15 +439,25 @@ Widget areasAttention(BuildContext context) {
               width: 24,
               height: 24,
             ),
-            Text("Areas Requiring Attention", style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-              color: Colors.white,
-            ),),
-            SizedBox(width: 24,),
+            Text(
+              "Areas Requiring Attention",
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w400,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(
+              width: 24,
+            ),
             Transform.rotate(
-                angle: 180 * math.pi / 180,
-                child: Icon(Icons.arrow_back_ios, size: 18, color: Colors.white,),)
+              angle: 180 * math.pi / 180,
+              child: Icon(
+                Icons.arrow_back_ios,
+                size: 18,
+                color: Colors.white,
+              ),
+            )
           ],
         ),
       ));
@@ -629,7 +719,8 @@ Widget ratio(BuildContext context) {
                                 fontWeight: FontWeight.w700,
                                 color: Colors.red),
                           ),
-                          SvgPicture.asset("res/bihance_pic/icons/co2_rating.svg"),
+                          SvgPicture.asset(
+                              "res/bihance_pic/icons/co2_rating.svg"),
                         ],
                       ),
                       Column(
@@ -641,7 +732,8 @@ Widget ratio(BuildContext context) {
                                 fontWeight: FontWeight.w700,
                                 color: textColorLightGreen),
                           ),
-                          SvgPicture.asset("res/bihance_pic/icons/o2_rating.svg"),
+                          SvgPicture.asset(
+                              "res/bihance_pic/icons/o2_rating.svg"),
                         ],
                       ),
                       Column(

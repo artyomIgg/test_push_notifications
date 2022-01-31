@@ -28,6 +28,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     // final size = MediaQuery.of(context).size;
     return MaterialApp(
+      theme: ThemeData(fontFamily: "SFProDisplay"),
       home: SafeArea(child: Home()),
     );
   }

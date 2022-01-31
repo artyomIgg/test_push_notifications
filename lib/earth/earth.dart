@@ -393,58 +393,32 @@ Widget bottomNavBar(BuildContext context) {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    "res/bihance_pic/icons/home.svg",
-                    height: 24,
-                    width: 24,
-                  ),
-                  Text("Home", style: TextStyle(fontSize: 16))
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    "res/bihance_pic/icons/search.svg",
-                    height: 24,
-                    width: 24,
-                  ),
-                  Text("Search", style: TextStyle(fontSize: 16))
-                ],
-              ),
+              bottomNavBarIcon("res/bihance_pic/icons/home.svg", "Home"),
+              bottomNavBarIcon("res/bihance_pic/icons/search.svg", "Search"),
               SizedBox(
                 width: size.width * 0.20,
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    "res/bihance_pic/icons/rating.svg",
-                    height: 24,
-                    width: 24,
-                  ),
-                  Text("Rating", style: TextStyle(fontSize: 16))
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    "res/bihance_pic/icons/profile.svg",
-                    height: 24,
-                    width: 24,
-                  ),
-                  Text("Profile", style: TextStyle(fontSize: 16))
-                ],
-              ),
+              bottomNavBarIcon("res/bihance_pic/icons/rating.svg", "Rating"),
+              bottomNavBarIcon("res/bihance_pic/icons/profile.svg", "Profile"),
             ],
           ),
         ),
       ],
     ),
+  );
+}
+
+Widget bottomNavBarIcon(String path, String title) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      SvgPicture.asset(
+        path,
+        height: 30,
+        width: 30,
+      ),
+      Text(title, style: TextStyle(fontSize: 10))
+    ],
   );
 }
 

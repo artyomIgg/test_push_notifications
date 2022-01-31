@@ -5,6 +5,12 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:photo_view/photo_view.dart';
 
+Color bottomNavBarColor = Color(0xFF25372D);
+Color bottomNavBarSelectTextColor = Color(0xFF88F9BA);
+Color bottomNavBarTextColor = Color(0xffB4CCBA);
+Color bottomNavBarButtonColor = Color(0xffBFE9F8);
+Color textColorLightGreen = Color(0xff88F9BA);
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -52,9 +58,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   Color cardGradientSecondGreen = Color(0xff71B280);
   Color cardGradientFirstBlue = Color(0xff4B6CB7);
   Color cardGradientSecondBlue = Color(0xff182848);
-  Color textCountColorGreen = Color(0xff88F9BA);
   Color textCountColorBlue = Color(0xffBFE9F8);
-  Color bottomNavBarColor = Color(0xff191C1A);
   bool isTap = false;
   // bool isDoubleTap = false;
 
@@ -300,7 +304,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                   "256k",
                                   "+4% of target",
                                   "res/bihance_pic/graph_green.svg",
-                                  textCountColorGreen),
+                                  textColorLightGreen),
                             ),
                             SizedBox(
                               width: 16,
@@ -317,6 +321,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             Container(),
                           ],
                         )),
+                    ratio(context),
+                    totalProgress(context),
                     Padding(
                         padding: EdgeInsets.all(16),
                         child: Row(
@@ -346,7 +352,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             ),
                             Container(),
                           ],
-                        ))
+                        )),
                   ],
                 ),
               ),
@@ -357,6 +363,406 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       ),
     );
   }
+}
+
+Widget totalProgress(BuildContext context) {
+  return Padding(
+      padding: EdgeInsets.all(16),
+      child: Container(
+        padding: EdgeInsets.all(16),
+        height: 223,
+        decoration: BoxDecoration(
+          color: Color(0xff1D2621),
+          borderRadius: BorderRadius.circular(25),
+        ),
+        width: MediaQuery.of(context).size.width - 16 - 16,
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SvgPicture.asset(
+                  "res/bihance_pic/total_progress.svg",
+                  width: 100,
+                  height: 100,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Total progress",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 58,)
+                      ],
+                    ),
+                    SizedBox(height: 12,),
+                    Row(
+                      children: [
+                        SvgPicture.asset("res/bihance_pic/green_bullet.svg"),
+                        SizedBox(width: 9,),
+                        SizedBox(
+                            width: 150,
+                            child: Text(
+                              "to normalize the oxygen situation",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.white,
+                              ),
+                            )),
+                      ],
+                    ),
+                    SizedBox(height: 16,),
+                    Row(
+                      children: [
+                        SvgPicture.asset("res/bihance_pic/red_bullet.svg"),
+                        SizedBox(width: 9,),
+                        SizedBox(
+                            width: 150,
+                            child: Text(
+                              "to rise temperature of the planet",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.white,
+                              ),
+                            )),
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ),
+            SizedBox(height: 25,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text("150K", style: TextStyle(
+                          fontSize: 28, fontWeight: FontWeight.w700,
+                          color: textColorLightGreen,
+                        ),),
+                        Column(
+                          children: [
+                            SizedBox(height: 10,),
+                            Text("  /1,2M", style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w400,
+                              color: bottomNavBarTextColor,
+                            ),),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Plants", style: TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w400,
+                          color: bottomNavBarTextColor,
+                        ),),
+                      ],
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text("418" ,style: TextStyle(
+                          fontSize: 28, fontWeight: FontWeight.w700,
+                          color: Colors.red,
+                        ),),
+                        Column(
+                          children: [
+                            SizedBox(height: 10,),
+                            Text("  /1500", style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w400,
+                              color: bottomNavBarTextColor,
+                            ),),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Text("CO2 (ppm)", style: TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.w400,
+                      color: bottomNavBarTextColor,
+                    ),),
+                  ],
+                ),
+                SizedBox(width: 42,)
+              ],
+            )
+          ],
+        ),
+      ));
+}
+
+Widget ratio(BuildContext context) {
+  return Padding(
+    padding: EdgeInsets.all(16),
+    child: Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text("O2 to CO2 Ratio",
+                  style: TextStyle(color: Colors.white, fontSize: 17)),
+            ],
+          ),
+        ),
+        Container(
+            padding: EdgeInsets.all(16),
+            height: 368,
+            decoration: BoxDecoration(
+              color: Color(0xff1D2621),
+              borderRadius: BorderRadius.circular(25),
+            ),
+            width: MediaQuery.of(context).size.width - 16 - 16,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      "All",
+                      style: TextStyle(fontSize: 17, color: Colors.white),
+                    ),
+                    Text(
+                      "Month",
+                      style: TextStyle(fontSize: 17, color: Colors.white),
+                    ),
+                    Text(
+                      "Week",
+                      style:
+                          TextStyle(fontSize: 17, color: textColorLightGreen),
+                    ),
+                    Text(
+                      "Day",
+                      style: TextStyle(fontSize: 17, color: Colors.white),
+                    ),
+                    SizedBox(
+                      width: 24,
+                    ),
+                    Icon(
+                      Icons.more_horiz,
+                      size: 24,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 27, horizontal: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            "+24%",
+                            style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.red),
+                          ),
+                          Text(
+                            "CO2",
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: bottomNavBarTextColor,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            "+4%",
+                            style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700,
+                                color: textColorLightGreen),
+                          ),
+                          Text(
+                            "O2",
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: bottomNavBarTextColor,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            "-20%",
+                            style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.red),
+                          ),
+                          Text(
+                            "Difference",
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: bottomNavBarTextColor,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Center(
+                    child: SvgPicture.asset("res/bihance_pic/ratio_graph.svg")),
+                Padding(
+                  padding: const EdgeInsets.only(top: 15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            "17",
+                            style: TextStyle(
+                                color: bottomNavBarTextColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800),
+                          ),
+                          Text(
+                            "MON",
+                            style: TextStyle(
+                              color: bottomNavBarTextColor,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          )
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            "18",
+                            style: TextStyle(
+                                color: bottomNavBarTextColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800),
+                          ),
+                          Text("TUE",
+                              style: TextStyle(
+                                color: bottomNavBarTextColor,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                              ))
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            "19",
+                            style: TextStyle(
+                                color: bottomNavBarTextColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800),
+                          ),
+                          Text("WED",
+                              style: TextStyle(
+                                color: bottomNavBarTextColor,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                              ))
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            "20",
+                            style: TextStyle(
+                                color: bottomNavBarTextColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800),
+                          ),
+                          Text("THU",
+                              style: TextStyle(
+                                color: bottomNavBarTextColor,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                              ))
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            "21",
+                            style: TextStyle(
+                                color: bottomNavBarTextColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800),
+                          ),
+                          Text("FRI",
+                              style: TextStyle(
+                                color: bottomNavBarTextColor,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                              ))
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            "22",
+                            style: TextStyle(
+                                color: bottomNavBarTextColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800),
+                          ),
+                          Text("SAT",
+                              style: TextStyle(
+                                color: bottomNavBarTextColor,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                              ))
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            "23",
+                            style: TextStyle(
+                                color: bottomNavBarTextColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800),
+                          ),
+                          Text("SUN",
+                              style: TextStyle(
+                                color: bottomNavBarTextColor,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                              ))
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            )),
+      ],
+    ),
+  );
 }
 
 Widget bottomNavBar(BuildContext context) {
@@ -380,7 +786,7 @@ Widget bottomNavBar(BuildContext context) {
                 height: 56,
                 width: 56,
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: bottomNavBarButtonColor,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(Icons.close),
@@ -393,18 +799,19 @@ Widget bottomNavBar(BuildContext context) {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              bottomNavBarIcon("res/bihance_pic/icons/home.svg", "Home", true),
-              bottomNavBarIcon(
-                  "res/bihance_pic/icons/search.svg", "Search", true),
+              bottomNavBarIcon("res/bihance_pic/icons/home.svg", "Home", true,
+                  bottomNavBarSelectTextColor),
+              bottomNavBarIcon("res/bihance_pic/icons/search.svg", "Search",
+                  true, bottomNavBarTextColor),
               SizedBox(
                 width: size.width * 0.20,
-                child: bottomNavBarIcon(
-                    "res/bihance_pic/icons/search.svg", "Plant", false),
+                child: bottomNavBarIcon("res/bihance_pic/icons/search.svg",
+                    "Plant", false, bottomNavBarTextColor),
               ),
-              bottomNavBarIcon(
-                  "res/bihance_pic/icons/rating.svg", "Rating", true),
-              bottomNavBarIcon(
-                  "res/bihance_pic/icons/profile.svg", "Profile", true),
+              bottomNavBarIcon("res/bihance_pic/icons/rating.svg", "Rating",
+                  true, bottomNavBarTextColor),
+              bottomNavBarIcon("res/bihance_pic/icons/profile.svg", "Profile",
+                  true, bottomNavBarTextColor),
             ],
           ),
         ),
@@ -413,7 +820,8 @@ Widget bottomNavBar(BuildContext context) {
   );
 }
 
-Widget bottomNavBarIcon(String path, String title, bool isIconVisible) {
+Widget bottomNavBarIcon(
+    String path, String title, bool isIconVisible, Color textColor) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
@@ -425,7 +833,7 @@ Widget bottomNavBarIcon(String path, String title, bool isIconVisible) {
           width: 30,
         ),
       ),
-      Text(title, style: TextStyle(fontSize: 10))
+      Text(title, style: TextStyle(fontSize: 10, color: textColor))
     ],
   );
 }
@@ -542,7 +950,7 @@ class BNBCustomPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = Colors.white
+      ..color = bottomNavBarColor
       ..style = PaintingStyle.fill;
     Path path = Path()..moveTo(0, 10);
     path.quadraticBezierTo(size.width * 0.0, 10, size.width * 0.0, 25);

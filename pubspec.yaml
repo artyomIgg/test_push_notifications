@@ -93,11 +93,13 @@ flutter:
     - res/bihance_pic/icons/profile.svg
     - res/bihance_pic/icons/rating.svg
     - res/bihance_pic/icons/search.svg
+    - res/bihance_pic/icons/alert_circle.svg
+    - res/bihance_pic/icons/co2_rating.svg
+    - res/bihance_pic/icons/o2_rating.svg
     - res/bihance_pic/ratio_graph.svg
     - res/bihance_pic/total_progress.svg
     - res/bihance_pic/green_bullet.svg
     - res/bihance_pic/red_bullet.svg
-    - res/bihance_pic/icons/alert_circle.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

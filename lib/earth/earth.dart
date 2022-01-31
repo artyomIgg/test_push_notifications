@@ -629,13 +629,7 @@ Widget ratio(BuildContext context) {
                                 fontWeight: FontWeight.w700,
                                 color: Colors.red),
                           ),
-                          Text(
-                            "CO2",
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: bottomNavBarTextColor,
-                                fontWeight: FontWeight.w400),
-                          ),
+                          SvgPicture.asset("res/bihance_pic/icons/co2_rating.svg"),
                         ],
                       ),
                       Column(
@@ -647,13 +641,7 @@ Widget ratio(BuildContext context) {
                                 fontWeight: FontWeight.w700,
                                 color: textColorLightGreen),
                           ),
-                          Text(
-                            "O2",
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: bottomNavBarTextColor,
-                                fontWeight: FontWeight.w400),
-                          ),
+                          SvgPicture.asset("res/bihance_pic/icons/o2_rating.svg"),
                         ],
                       ),
                       Column(

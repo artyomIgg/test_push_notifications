@@ -323,36 +323,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         )),
                     ratio(context),
                     totalProgress(context),
-                    Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Row(
-                          children: [
-                            Container(
-                              color: Colors.transparent,
-                              height: 190,
-                              width: 200,
-                            ),
-                            SizedBox(
-                              width: 16,
-                            ),
-                            Container(),
-                          ],
-                        )),
-                    Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Row(
-                          children: [
-                            Container(
-                              color: Colors.transparent,
-                              height: 190,
-                              width: 200,
-                            ),
-                            SizedBox(
-                              width: 16,
-                            ),
-                            Container(),
-                          ],
-                        )),
+                    areasAttention(context),
+                    SizedBox(
+                      height: 140,
+                    )
                   ],
                 ),
               ),
@@ -363,6 +337,39 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       ),
     );
   }
+}
+
+Widget areasAttention(BuildContext context) {
+  return Padding(
+      padding: EdgeInsets.all(16),
+      child: Container(
+        padding: EdgeInsets.all(16),
+        height: 64,
+        decoration: BoxDecoration(
+          color: Color(0xff1D2621),
+          borderRadius: BorderRadius.circular(13),
+        ),
+        width: MediaQuery.of(context).size.width - 16 - 16,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SvgPicture.asset(
+              "res/bihance_pic/icons/alert_circle.svg",
+              width: 24,
+              height: 24,
+            ),
+            Text("Areas Requiring Attention", style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w400,
+              color: Colors.white,
+            ),),
+            SizedBox(width: 24,),
+            Transform.rotate(
+                angle: 180 * math.pi / 180,
+                child: Icon(Icons.arrow_back_ios, size: 18, color: Colors.white,),)
+          ],
+        ),
+      ));
 }
 
 Widget totalProgress(BuildContext context) {
@@ -401,14 +408,20 @@ Widget totalProgress(BuildContext context) {
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(width: 58,)
+                        SizedBox(
+                          width: 58,
+                        )
                       ],
                     ),
-                    SizedBox(height: 12,),
+                    SizedBox(
+                      height: 12,
+                    ),
                     Row(
                       children: [
                         SvgPicture.asset("res/bihance_pic/green_bullet.svg"),
-                        SizedBox(width: 9,),
+                        SizedBox(
+                          width: 9,
+                        ),
                         SizedBox(
                             width: 150,
                             child: Text(
@@ -421,11 +434,15 @@ Widget totalProgress(BuildContext context) {
                             )),
                       ],
                     ),
-                    SizedBox(height: 16,),
+                    SizedBox(
+                      height: 16,
+                    ),
                     Row(
                       children: [
                         SvgPicture.asset("res/bihance_pic/red_bullet.svg"),
-                        SizedBox(width: 9,),
+                        SizedBox(
+                          width: 9,
+                        ),
                         SizedBox(
                             width: 150,
                             child: Text(
@@ -442,7 +459,9 @@ Widget totalProgress(BuildContext context) {
                 )
               ],
             ),
-            SizedBox(height: 25,),
+            SizedBox(
+              height: 25,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -450,27 +469,41 @@ Widget totalProgress(BuildContext context) {
                   children: [
                     Row(
                       children: [
-                        Text("150K", style: TextStyle(
-                          fontSize: 28, fontWeight: FontWeight.w700,
-                          color: textColorLightGreen,
-                        ),),
+                        Text(
+                          "150K",
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                            color: textColorLightGreen,
+                          ),
+                        ),
                         Column(
                           children: [
-                            SizedBox(height: 10,),
-                            Text("  /1,2M", style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.w400,
-                              color: bottomNavBarTextColor,
-                            ),),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "  /1,2M",
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w400,
+                                color: bottomNavBarTextColor,
+                              ),
+                            ),
                           ],
                         ),
                       ],
                     ),
                     Row(
                       children: [
-                        Text("Plants", style: TextStyle(
-                          fontSize: 12, fontWeight: FontWeight.w400,
-                          color: bottomNavBarTextColor,
-                        ),),
+                        Text(
+                          "Plants",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: bottomNavBarTextColor,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -479,28 +512,44 @@ Widget totalProgress(BuildContext context) {
                   children: [
                     Row(
                       children: [
-                        Text("418" ,style: TextStyle(
-                          fontSize: 28, fontWeight: FontWeight.w700,
-                          color: Colors.red,
-                        ),),
+                        Text(
+                          "418",
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.red,
+                          ),
+                        ),
                         Column(
                           children: [
-                            SizedBox(height: 10,),
-                            Text("  /1500", style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.w400,
-                              color: bottomNavBarTextColor,
-                            ),),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "  /1500",
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w400,
+                                color: bottomNavBarTextColor,
+                              ),
+                            ),
                           ],
                         ),
                       ],
                     ),
-                    Text("CO2 (ppm)", style: TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.w400,
-                      color: bottomNavBarTextColor,
-                    ),),
+                    Text(
+                      "CO2 (ppm)",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: bottomNavBarTextColor,
+                      ),
+                    ),
                   ],
                 ),
-                SizedBox(width: 42,)
+                SizedBox(
+                  width: 42,
+                )
               ],
             )
           ],

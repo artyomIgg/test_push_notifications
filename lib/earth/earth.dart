@@ -229,7 +229,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         onHorizontalDragUpdate: (_) {
                           _controller.stop();
                           _earthZoomTimer.cancel();
-                          _earthRotationTimer.cancel();
+                          if(_earthRotationTimer.isActive) {
+                            _earthRotationTimer.cancel();
+                          }
                           updateMove = Vector2(_.delta.dx, _.delta.dy);
                           _earth.rotation.y =
                               _earth.rotation.y + _.delta.dx / 2;
@@ -408,15 +410,20 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   void _startEarthRotationTimer() {
-    _earthRotationTimer = Timer(Duration(seconds: 3) , () {
+    if(!_earthRotationTimer.isActive) {
+      _earthRotationTimer = Timer(Duration(seconds: 3) , () {
       _controller..forward()..repeat();
     });
+    }
   }
 
   void _startEarthZoomTimer() {
-    _earthZoomTimer = Timer(Duration(seconds: 3), () {
+    if(!_earthZoomTimer.isActive) {
+      _earthZoomTimer = Timer(Duration(seconds: 3), () {
+      print('_earthDoubleTapSizeController');
       _earthDoubleTapSizeController.reverse();
     });
+    }
   }
 }
 

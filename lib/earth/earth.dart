@@ -391,15 +391,20 @@ Widget bottomNavBar(BuildContext context) {
           height: 80,
           child: Row(
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              bottomNavBarIcon("res/bihance_pic/icons/home.svg", "Home"),
-              bottomNavBarIcon("res/bihance_pic/icons/search.svg", "Search"),
+              bottomNavBarIcon("res/bihance_pic/icons/home.svg", "Home", true),
+              bottomNavBarIcon(
+                  "res/bihance_pic/icons/search.svg", "Search", true),
               SizedBox(
                 width: size.width * 0.20,
+                child: bottomNavBarIcon(
+                    "res/bihance_pic/icons/search.svg", "Plant", false),
               ),
-              bottomNavBarIcon("res/bihance_pic/icons/rating.svg", "Rating"),
-              bottomNavBarIcon("res/bihance_pic/icons/profile.svg", "Profile"),
+              bottomNavBarIcon(
+                  "res/bihance_pic/icons/rating.svg", "Rating", true),
+              bottomNavBarIcon(
+                  "res/bihance_pic/icons/profile.svg", "Profile", true),
             ],
           ),
         ),
@@ -408,14 +413,17 @@ Widget bottomNavBar(BuildContext context) {
   );
 }
 
-Widget bottomNavBarIcon(String path, String title) {
+Widget bottomNavBarIcon(String path, String title, bool isIconVisible) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      SvgPicture.asset(
-        path,
-        height: 30,
-        width: 30,
+      Opacity(
+        opacity: isIconVisible ? 1 : 0,
+        child: SvgPicture.asset(
+          path,
+          height: 30,
+          width: 30,
+        ),
       ),
       Text(title, style: TextStyle(fontSize: 10))
     ],

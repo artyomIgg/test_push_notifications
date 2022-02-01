@@ -30,6 +30,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     // final size = MediaQuery.of(context).size;
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: "SFProDisplay"),
       home: SafeArea(child: Home()),
     );
@@ -326,35 +327,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                 ClipRRect(
                                     child:
                                         Cube(onSceneCreated: _onSceneCreated)),
-                                AnimatedSwitcher(
-                                  duration: Duration(milliseconds: 600),
-                                  transitionBuilder: (Widget child,
-                                      Animation<double> animation) {
-                                    return ScaleTransition(
-                                        scale: animation, child: child);
-                                  },
-                                  child: isTap
-                                      ? ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(0),
-                                          // clipper: CustomClipper,
-                                          // decoration:  BoxDecoration(
-                                          //     shape: BoxShape.circle,
-                                          //     image: DecorationImage(
-                                          //         fit: BoxFit.fill,
-                                          //         image:  Image.asset("res/3d_model/flutter8.png")
-                                          //     )
-                                          // ),
-                                          child: PhotoView(
-                                            initialScale: 0.35,
-                                            backgroundDecoration: BoxDecoration(
-                                                color: Colors.transparent),
-                                            imageProvider: AssetImage(
-                                                "res/3d_model/flutter8.png"),
-                                          ),
-                                        )
-                                      : const SizedBox(),
-                                ),
                               ],
                             )),
                       ),
@@ -475,7 +447,7 @@ Widget totalProgress(BuildContext context) {
       padding: EdgeInsets.all(16),
       child: Container(
         padding: EdgeInsets.all(16),
-        height: 223,
+        height: 230,
         decoration: BoxDecoration(
           color: Color(0xff1D2621),
           borderRadius: BorderRadius.circular(25),
@@ -985,7 +957,7 @@ Widget smallCardInfo(Color firstColor, Color secondColor, String title,
           firstColor,
           secondColor,
         ])),
-    height: 190,
+    height: 210,
     width: 200,
     child: Padding(
       padding: const EdgeInsets.all(16.0),

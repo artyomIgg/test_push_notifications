@@ -64,6 +64,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   Color cardGradientSecondBlue = Color(0xff182848);
   Color textCountColorBlue = Color(0xffBFE9F8);
   bool isTap = false;
+  bool isLongPress = false;
 
   late Timer _earthRotationTimer;
   late Timer _earthZoomTimer;
@@ -131,8 +132,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
     _earthRotationY = _controller.value * 360;
 
-    _earthRotationTimer = Timer(Duration(seconds: 3) , () {
-      _controller.forward();
+    _earthRotationTimer = Timer(Duration(seconds: 3), () {
+      _controller
+        ..forward()
+        ..repeat();
     });
     _earthZoomTimer = Timer(Duration(seconds: 5), () {
       _earthDoubleTapSizeController.reverse();
@@ -225,28 +228,28 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         onLongPress: () {
                           _earthZoomTimer.cancel();
                           _earthRotationTimer.cancel();
+                          isLongPress = true;
                         },
 
                         onHorizontalDragUpdate: (_) {
-                          _controller.stop();
-                          _earthZoomTimer.cancel();
-                          if(_earthRotationTimer.isActive) {
-                            _earthRotationTimer.cancel();
-                          }
-                          updateMove = Vector2(_.delta.dx, _.delta.dy);
-                          _earth.rotation.y =
-                              _earth.rotation.y + _.delta.dx / 2;
-                          _earth.updateTransform();
-                          // _scene.camera.position.setValues(_scene.camera.position.x + _.delta.dx, 0, 0);
-                          _scene.update();
-                          if (_earth.rotation.y <= 0) {
-                            _controller.value =
-                                (_earth.rotation.y + 360) / 360;
-                          } else if (_earth.rotation.y >= 360) {
-                            _controller.value =
-                                (_earth.rotation.y - 360) / 360;
-                          } else
-                            _controller.value = _earth.rotation.y / 360;
+                          // _controller.stop();
+                          // _earthZoomTimer.cancel();
+                          // _earthRotationTimer.cancel();
+                          // updateMove = Vector2(_.delta.dx, _.delta.dy);
+                          // _earth.rotation.y =
+                          //     _earth.rotation.y + _.delta.dx / 2;
+                          // _earth.updateTransform();
+                          // // _scene.camera.position.setValues(_scene.camera.position.x + _.delta.dx, 0, 0);
+                          // _scene.update();
+                          // if (_earth.rotation.y < 0) {
+                          //   _controller.value =
+                          //       (_earth.rotation.y + 360) / 360;
+                          // } else if (_earth.rotation.y > 360) {
+                          //   _controller.value =
+                          //       (_earth.rotation.y - 360) / 360;
+                          // } else {
+                          //   _controller.value = _earth.rotation.y / 360;
+                          // }
                         },
 
                         // onLongPress: () {
@@ -292,7 +295,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             },
                             onPointerMove: (_) {
                               // setState(() {
-                              //   _controller.stop();
+                                _controller.stop();
                               // });
                               _earthZoomTimer.cancel();
                               _earthRotationTimer.cancel();
@@ -302,14 +305,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                               _earth.updateTransform();
                               // _scene.camera.position.setValues(_scene.camera.position.x + _.delta.dx, 0, 0);
                               _scene.update();
-                              if (_earth.rotation.y <= 0) {
-                                _controller.value =
-                                    (_earth.rotation.y + 360) / 360;
-                              } else if (_earth.rotation.y >= 360) {
-                                _controller.value =
-                                    (_earth.rotation.y - 360) / 360;
-                              } else
-                                _controller.value = _earth.rotation.y / 360;
+                              // if (_earth.rotation.y <= 0) {
+                              //   _controller.value =
+                              //       (_earth.rotation.y + 360) / 360;
+                              // } else if (_earth.rotation.y >= 360) {
+                              //   _controller.value =
+                              //       (_earth.rotation.y - 360) / 360;
+                              // } else
+                              //   _controller.value = _earth.rotation.y / 360;
                             },
                             onPointerUp: (_) {
                               _startEarthRotationTimer();
@@ -371,7 +374,39 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               ),
             ),
           ),
-          Positioned(bottom: 0, left: 0, child: bottomNavBar(context))
+          Positioned(bottom: 0, left: 0, child: bottomNavBar(context)),
+          AnimatedSwitcher(
+            duration: Duration(milliseconds: 600),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return ScaleTransition(scale: animation, child: child);
+            },
+            child: isTap
+                ? GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        setState(() {
+                          _controller.stop();
+                          if (!isTap) {
+                            _earthSizeAnimationController.reverse();
+                          } else {
+                            _earthSizeAnimationController.forward();
+                          }
+                          isTap = !isTap;
+                        });
+                      });
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(0),
+                      child: PhotoView(
+                        initialScale: 0.35,
+                        backgroundDecoration:
+                            BoxDecoration(color: Colors.transparent),
+                        imageProvider: AssetImage("res/3d_model/flutter8.png"),
+                      ),
+                    ),
+                  )
+                : const SizedBox(),
+          ),
         ],
       ),
     );
@@ -382,19 +417,30 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   void _startEarthRotationTimer() {
-    if(!_earthRotationTimer.isActive) {
-      _earthRotationTimer = Timer(Duration(seconds: 3) , () {
-      _controller..forward()..repeat();
-    });
+    if (!_earthRotationTimer.isActive) {
+      _earthRotationTimer = Timer(Duration(seconds: 3), () {
+        if (_earth.rotation.y <= 0) {
+          _controller.value =
+              (_earth.rotation.y + 360) / 360;
+        } else if (_earth.rotation.y >= 360) {
+          _controller.value =
+              (_earth.rotation.y - 360) / 360;
+        } else {
+          _controller.value = _earth.rotation.y / 360;
+        }
+        _controller
+          ..forward()
+          ..repeat();
+      });
     }
   }
 
   void _startEarthZoomTimer() {
-    if(!_earthZoomTimer.isActive) {
+    if (!_earthZoomTimer.isActive) {
       _earthZoomTimer = Timer(Duration(seconds: 3), () {
-      print('_earthDoubleTapSizeController');
-      _earthDoubleTapSizeController.reverse();
-    });
+        print('_earthDoubleTapSizeController');
+        _earthDoubleTapSizeController.reverse();
+      });
     }
   }
 }
@@ -737,136 +783,142 @@ Widget ratio(BuildContext context) {
                   ),
                 ),
                 Center(
-                    child: SvgPicture.asset("res/bihance_pic/ratio_graph.svg")),
-                Padding(
-                  padding: const EdgeInsets.only(top: 15.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Column(
-                        children: [
-                          Text(
-                            "17",
-                            style: TextStyle(
-                                color: bottomNavBarTextColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800),
-                          ),
-                          Text(
-                            "MON",
-                            style: TextStyle(
-                              color: bottomNavBarTextColor,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          )
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            "18",
-                            style: TextStyle(
-                                color: bottomNavBarTextColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800),
-                          ),
-                          Text("TUE",
-                              style: TextStyle(
-                                color: bottomNavBarTextColor,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w400,
-                              ))
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            "19",
-                            style: TextStyle(
-                                color: bottomNavBarTextColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800),
-                          ),
-                          Text("WED",
-                              style: TextStyle(
-                                color: bottomNavBarTextColor,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w400,
-                              ))
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            "20",
-                            style: TextStyle(
-                                color: bottomNavBarTextColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800),
-                          ),
-                          Text("THU",
-                              style: TextStyle(
-                                color: bottomNavBarTextColor,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w400,
-                              ))
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            "21",
-                            style: TextStyle(
-                                color: bottomNavBarTextColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800),
-                          ),
-                          Text("FRI",
-                              style: TextStyle(
-                                color: bottomNavBarTextColor,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w400,
-                              ))
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            "22",
-                            style: TextStyle(
-                                color: bottomNavBarTextColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800),
-                          ),
-                          Text("SAT",
-                              style: TextStyle(
-                                color: bottomNavBarTextColor,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w400,
-                              ))
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            "23",
-                            style: TextStyle(
-                                color: bottomNavBarTextColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800),
-                          ),
-                          Text("SUN",
-                              style: TextStyle(
-                                color: bottomNavBarTextColor,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w400,
-                              ))
-                        ],
-                      ),
-                    ],
-                  ),
-                )
+                    child: SvgPicture.asset(
+                  "res/bihance_pic/ratio_graph_full.svg",
+                  // width: 296, height: 191,
+                )),
+                // Padding(
+                //   padding: const EdgeInsets.only(top: 15.0),
+                //   child: Container(
+                //     width: 296, height: 191,
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //       children: [
+                //         Column(
+                //           children: [
+                //             Text(
+                //               "17",
+                //               style: TextStyle(
+                //                   color: bottomNavBarTextColor,
+                //                   fontSize: 12,
+                //                   fontWeight: FontWeight.w800),
+                //             ),
+                //             Text(
+                //               "MON",
+                //               style: TextStyle(
+                //                 color: bottomNavBarTextColor,
+                //                 fontSize: 10,
+                //                 fontWeight: FontWeight.w400,
+                //               ),
+                //             )
+                //           ],
+                //         ),
+                //         Column(
+                //           children: [
+                //             Text(
+                //               "18",
+                //               style: TextStyle(
+                //                   color: bottomNavBarTextColor,
+                //                   fontSize: 12,
+                //                   fontWeight: FontWeight.w800),
+                //             ),
+                //             Text("TUE",
+                //                 style: TextStyle(
+                //                   color: bottomNavBarTextColor,
+                //                   fontSize: 10,
+                //                   fontWeight: FontWeight.w400,
+                //                 ))
+                //           ],
+                //         ),
+                //         Column(
+                //           children: [
+                //             Text(
+                //               "19",
+                //               style: TextStyle(
+                //                   color: bottomNavBarTextColor,
+                //                   fontSize: 12,
+                //                   fontWeight: FontWeight.w800),
+                //             ),
+                //             Text("WED",
+                //                 style: TextStyle(
+                //                   color: bottomNavBarTextColor,
+                //                   fontSize: 10,
+                //                   fontWeight: FontWeight.w400,
+                //                 ))
+                //           ],
+                //         ),
+                //         Column(
+                //           children: [
+                //             Text(
+                //               "20",
+                //               style: TextStyle(
+                //                   color: bottomNavBarTextColor,
+                //                   fontSize: 12,
+                //                   fontWeight: FontWeight.w800),
+                //             ),
+                //             Text("THU",
+                //                 style: TextStyle(
+                //                   color: bottomNavBarTextColor,
+                //                   fontSize: 10,
+                //                   fontWeight: FontWeight.w400,
+                //                 ))
+                //           ],
+                //         ),
+                //         Column(
+                //           children: [
+                //             Text(
+                //               "21",
+                //               style: TextStyle(
+                //                   color: bottomNavBarTextColor,
+                //                   fontSize: 12,
+                //                   fontWeight: FontWeight.w800),
+                //             ),
+                //             Text("FRI",
+                //                 style: TextStyle(
+                //                   color: bottomNavBarTextColor,
+                //                   fontSize: 10,
+                //                   fontWeight: FontWeight.w400,
+                //                 ))
+                //           ],
+                //         ),
+                //         Column(
+                //           children: [
+                //             Text(
+                //               "22",
+                //               style: TextStyle(
+                //                   color: bottomNavBarTextColor,
+                //                   fontSize: 12,
+                //                   fontWeight: FontWeight.w800),
+                //             ),
+                //             Text("SAT",
+                //                 style: TextStyle(
+                //                   color: bottomNavBarTextColor,
+                //                   fontSize: 10,
+                //                   fontWeight: FontWeight.w400,
+                //                 ))
+                //           ],
+                //         ),
+                //         Column(
+                //           children: [
+                //             Text(
+                //               "23",
+                //               style: TextStyle(
+                //                   color: bottomNavBarTextColor,
+                //                   fontSize: 12,
+                //                   fontWeight: FontWeight.w800),
+                //             ),
+                //             Text("SUN",
+                //                 style: TextStyle(
+                //                   color: bottomNavBarTextColor,
+                //                   fontSize: 10,
+                //                   fontWeight: FontWeight.w400,
+                //                 ))
+                //           ],
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // )
               ],
             )),
       ],

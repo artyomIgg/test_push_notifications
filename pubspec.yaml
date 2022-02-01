@@ -97,6 +97,7 @@ flutter:
     - res/bihance_pic/icons/co2_rating.svg
     - res/bihance_pic/icons/o2_rating.svg
     - res/bihance_pic/ratio_graph.svg
+    - res/bihance_pic/ratio_graph_full.svg
     - res/bihance_pic/total_progress.svg
     - res/bihance_pic/green_bullet.svg
     - res/bihance_pic/red_bullet.svg

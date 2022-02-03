@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.test_notifications">
    <application
-        android:label="test_notifications"
+        android:label="Green World"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
         <activity

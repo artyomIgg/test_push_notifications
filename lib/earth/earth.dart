@@ -47,16 +47,18 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with TickerProviderStateMixin {
   late AnimationController _controller;
   late AnimationController _earthSizeAnimationController;
+  late AnimationController _earthSizeUpAnimationController;
   late AnimationController _earthDoubleTapSizeController;
+  late AnimationController _earthOpacityController;
   late Object _earth;
   late Scene _scene;
   late double _earthRotationY;
   late Vector2 startMove;
   late Vector2 updateMove;
   late bool isControllerStop = false;
-  Vector3 defaultEarthSize = Vector3(9, 9, 9);
+  Vector3 defaultEarthSize = Vector3(8, 8, 8);
   Vector3 scaleMinEarthSize = Vector3(5, 5, 5);
-  Vector3 scaleMaxEarthSize = Vector3(12, 12, 12);
+  Vector3 scaleMaxEarthSize = Vector3(10, 10, 10);
   Color backgroundColor = Color(0xff191C1A);
   Color cardGradientFirstGreen = Color(0xff134E5E);
   Color cardGradientSecondGreen = Color(0xff71B280);
@@ -64,7 +66,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   Color cardGradientSecondBlue = Color(0xff182848);
   Color textCountColorBlue = Color(0xffBFE9F8);
   bool isTap = false;
+  bool isTapZoom = true;
   bool isLongPress = false;
+  bool isReverseZoom = false;
 
   late Timer _earthRotationTimer;
   late Timer _earthZoomTimer;
@@ -98,24 +102,41 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       ..repeat();
 
     _earthSizeAnimationController = AnimationController(
-      duration: Duration(milliseconds: 700),
+      lowerBound: 0.7,
+      duration: Duration(milliseconds: 300),
       vsync: this,
     )..addListener(() {
-        if (_earth != null) {
-          _earth.scale.setFrom(
-              defaultEarthSize.xyz * _earthSizeAnimationController.value);
-          _earth.updateTransform();
-          _scene.update();
-        }
+        // if (_earth != null) {
+        _earthDoubleTapSizeController.stop();
+        _earth.scale.setFrom(
+            scaleMaxEarthSize.xyz * _earthSizeAnimationController.value);
+        _earth.updateTransform();
+        _scene.update();
+        // }
       });
 
+    _earthSizeUpAnimationController = AnimationController(
+      // lowerBound: 0.7,
+      duration: Duration(milliseconds: 300),
+      vsync: this,
+    )..addListener(() {
+      // if (_earth != null) {
+      _earthDoubleTapSizeController.stop();
+      _earth.scale.setFrom(
+          defaultEarthSize.xyz * _earthSizeUpAnimationController.value);
+      _earth.updateTransform();
+      _scene.update();
+      // }
+    });
+
     _earthDoubleTapSizeController = AnimationController(
-      duration: Duration(milliseconds: 800),
+      duration: Duration(milliseconds: 300),
       vsync: this,
     )..addListener(() {
         if (_earth != null &&
-            (_earthDoubleTapSizeController.value * scaleMaxEarthSize.x >=
-                defaultEarthSize.x)) {
+            ((_earthDoubleTapSizeController.value * scaleMaxEarthSize.x >=
+                    defaultEarthSize.x) &&
+                ((!isReverseZoom || _earth.scale.x != scaleMaxEarthSize.x)))) {
           _earth.scale.setFrom(
               scaleMaxEarthSize.xyz * _earthDoubleTapSizeController.value);
           _earth.updateTransform();
@@ -129,6 +150,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     //     });
     //   }
     // });
+
+    _earthOpacityController = AnimationController(
+        duration: Duration(milliseconds: 400),
+        vsync: this)..addListener(() {
+
+    })..forward();
 
     _earthRotationY = _controller.value * 360;
 
@@ -199,15 +226,27 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: GestureDetector(
                         onTap: () {
-                          setState(() {
+                          // _earthOpacityController.forward();
+                          isTapZoom = false;
+
                             _controller.stop();
-                            if (!isTap) {
-                              _earthSizeAnimationController.reverse();
+                            if (isTap) {
+                              _earthSizeUpAnimationController.forward(from: 0);
+                                _earthOpacityController.forward();
+                                  setState(() {
+                                    isTap = !isTap;
+                                  });
+                                // });
                             } else {
-                              _earthSizeAnimationController.forward();
+                              _earthSizeAnimationController.forward(from: 0);
+                                _earthOpacityController.reverse().whenComplete(() {
+                                  setState(() {
+                                    isTap = !isTap;
+                                  });
+                                });
+
                             }
-                            isTap = !isTap;
-                          });
+
                         },
 
                         onPanCancel: () {},
@@ -221,36 +260,36 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         onPanUpdate: (_) {},
 
                         onLongPressStart: (_) {
-                          _controller.stop();
-                          _earthDoubleTapSizeController.forward();
+                          // _controller.stop();
+                          // _earthDoubleTapSizeController.forward();
                         },
 
                         onLongPress: () {
-                          _earthZoomTimer.cancel();
-                          _earthRotationTimer.cancel();
-                          isLongPress = true;
-                        },
-
-                        onHorizontalDragUpdate: (_) {
-                          // _controller.stop();
                           // _earthZoomTimer.cancel();
                           // _earthRotationTimer.cancel();
-                          // updateMove = Vector2(_.delta.dx, _.delta.dy);
-                          // _earth.rotation.y =
-                          //     _earth.rotation.y + _.delta.dx / 2;
-                          // _earth.updateTransform();
-                          // // _scene.camera.position.setValues(_scene.camera.position.x + _.delta.dx, 0, 0);
-                          // _scene.update();
-                          // if (_earth.rotation.y < 0) {
-                          //   _controller.value =
-                          //       (_earth.rotation.y + 360) / 360;
-                          // } else if (_earth.rotation.y > 360) {
-                          //   _controller.value =
-                          //       (_earth.rotation.y - 360) / 360;
-                          // } else {
-                          //   _controller.value = _earth.rotation.y / 360;
-                          // }
+                          // isLongPress = true;
                         },
+
+                        // onHorizontalDragUpdate: (_) {
+                        //   // _controller.stop();
+                        //   // _earthZoomTimer.cancel();
+                        //   // _earthRotationTimer.cancel();
+                        //   // updateMove = Vector2(_.delta.dx, _.delta.dy);
+                        //   // _earth.rotation.y =
+                        //   //     _earth.rotation.y + _.delta.dx / 2;
+                        //   // _earth.updateTransform();
+                        //   // // _scene.camera.position.setValues(_scene.camera.position.x + _.delta.dx, 0, 0);
+                        //   // _scene.update();
+                        //   // if (_earth.rotation.y < 0) {
+                        //   //   _controller.value =
+                        //   //       (_earth.rotation.y + 360) / 360;
+                        //   // } else if (_earth.rotation.y > 360) {
+                        //   //   _controller.value =
+                        //   //       (_earth.rotation.y - 360) / 360;
+                        //   // } else {
+                        //   //   _controller.value = _earth.rotation.y / 360;
+                        //   // }
+                        // },
 
                         // onLongPress: () {
                         //   _controller.stop();
@@ -259,8 +298,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
                         onLongPressUp: () async {
                           // _controller.forward();
-                          _startEarthZoomTimer();
-                          _startEarthRotationTimer();
+                          // _startEarthZoomTimer();
+                          // _startEarthRotationTimer();
                           // await Future.delayed(Duration(milliseconds: 5000)).then((value) {
                           //   _earthDoubleTapSizeController.reverse();
                           // });
@@ -290,12 +329,16 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                               print("onPointerHover");
                             },
                             onPointerDown: (_) {
+                              // if(isTapZoom) {
+                              _earthDoubleTapSizeController.forward(from: 0.5);
+                              // }
                               _earthZoomTimer.cancel();
                               _earthRotationTimer.cancel();
                             },
                             onPointerMove: (_) {
+                              // _earthDoubleTapSizeController.forward();
                               // setState(() {
-                                _controller.stop();
+                              _controller.stop();
                               // });
                               _earthZoomTimer.cancel();
                               _earthRotationTimer.cancel();
@@ -327,9 +370,37 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             },
                             child: Stack(
                               children: [
-                                ClipRRect(
-                                    child:
-                                        Cube(onSceneCreated: _onSceneCreated)),
+                                AnimatedBuilder(
+                                  animation: _earthOpacityController,
+                                  builder: (BuildContext context, Widget? child) {
+                                    return Opacity(opacity: _earthOpacityController.value,
+                                      child: child,
+                                    );
+                                  },
+                                  child: ClipRRect(
+                                      child: Cube(onSceneCreated: _onSceneCreated)),
+                                ),
+                                AnimatedSwitcher(
+                                  duration: Duration(milliseconds: 600),
+                                  // transitionBuilder: (Widget child,
+                                  //     Animation<double> animation) {
+                                  //   return ScaleTransition(
+                                  //       scale: animation, child: child);
+                                  // },
+                                  child: isTap
+                                      ? ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(0),
+                                          child: PhotoView(
+                                            initialScale: 0.18,
+                                            backgroundDecoration: BoxDecoration(
+                                                color: Colors.transparent),
+                                            imageProvider: AssetImage(
+                                                "res/3d_model/flutter8_map.png"),
+                                          ),
+                                        )
+                                      : const SizedBox(),
+                                ),
                               ],
                             )),
                       ),
@@ -375,38 +446,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
             ),
           ),
           Positioned(bottom: 0, left: 0, child: bottomNavBar(context)),
-          AnimatedSwitcher(
-            duration: Duration(milliseconds: 600),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return ScaleTransition(scale: animation, child: child);
-            },
-            child: isTap
-                ? GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        setState(() {
-                          _controller.stop();
-                          if (!isTap) {
-                            _earthSizeAnimationController.reverse();
-                          } else {
-                            _earthSizeAnimationController.forward();
-                          }
-                          isTap = !isTap;
-                        });
-                      });
-                    },
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(0),
-                      child: PhotoView(
-                        initialScale: 0.35,
-                        backgroundDecoration:
-                            BoxDecoration(color: Colors.transparent),
-                        imageProvider: AssetImage("res/3d_model/flutter8.png"),
-                      ),
-                    ),
-                  )
-                : const SizedBox(),
-          ),
         ],
       ),
     );
@@ -418,13 +457,11 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   void _startEarthRotationTimer() {
     if (!_earthRotationTimer.isActive) {
-      _earthRotationTimer = Timer(Duration(seconds: 3), () {
+      _earthRotationTimer = Timer(Duration(seconds: 2), () {
         if (_earth.rotation.y <= 0) {
-          _controller.value =
-              (_earth.rotation.y + 360) / 360;
+          _controller.value = (_earth.rotation.y + 360) / 360;
         } else if (_earth.rotation.y >= 360) {
-          _controller.value =
-              (_earth.rotation.y - 360) / 360;
+          _controller.value = (_earth.rotation.y - 360) / 360;
         } else {
           _controller.value = _earth.rotation.y / 360;
         }
@@ -437,9 +474,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   void _startEarthZoomTimer() {
     if (!_earthZoomTimer.isActive) {
-      _earthZoomTimer = Timer(Duration(seconds: 3), () {
-        print('_earthDoubleTapSizeController');
+      isReverseZoom = true;
+      _earthZoomTimer = Timer(Duration(milliseconds: 0), () {
         _earthDoubleTapSizeController.reverse();
+        isReverseZoom = false;
       });
     }
   }

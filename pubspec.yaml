@@ -83,6 +83,7 @@ flutter:
     - res/3d_model/earth.mtl
     - res/3d_model/earth.png
     - res/3d_model/flutter8.png
+    - res/3d_model/flutter8_map.png
     - res/3d_model/flutter10.png
 #    - res/3d_model/lines.png
     - res/3d_model/flutter.svg

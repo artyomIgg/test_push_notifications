@@ -85,6 +85,7 @@ flutter:
     - res/3d_model/flutter8.png
     - res/3d_model/flutter8_map.png
     - res/3d_model/flutter10.png
+    - res/3d_model/flutter8_cut_transparent.png
 #    - res/3d_model/lines.png
     - res/3d_model/flutter.svg
     - res/bihance_pic/graph_green.svg
@@ -102,6 +103,8 @@ flutter:
     - res/bihance_pic/total_progress.svg
     - res/bihance_pic/green_bullet.svg
     - res/bihance_pic/red_bullet.svg
+    - res/bihance_pic/stats_tree.svg
+    - res/bihance_pic/planted_trees.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

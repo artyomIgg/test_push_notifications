@@ -12,6 +12,9 @@ Color bottomNavBarSelectTextColor = Color(0xFF88F9BA);
 Color bottomNavBarTextColor = Color(0xffB4CCBA);
 Color bottomNavBarButtonColor = Color(0xffBFE9F8);
 Color textColorLightGreen = Color(0xff88F9BA);
+Color bottomNavBarMapColor = Color(0xff033541);
+Color backImageGradientFirst = Color(0xff0F2027);
+Color backImageGradientSecond = Color(0xff2C5364);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -120,14 +123,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       duration: Duration(milliseconds: 300),
       vsync: this,
     )..addListener(() {
-      // if (_earth != null) {
-      _earthDoubleTapSizeController.stop();
-      _earth.scale.setFrom(
-          defaultEarthSize.xyz * _earthSizeUpAnimationController.value);
-      _earth.updateTransform();
-      _scene.update();
-      // }
-    });
+        // if (_earth != null) {
+        _earthDoubleTapSizeController.stop();
+        _earth.scale.setFrom(
+            defaultEarthSize.xyz * _earthSizeUpAnimationController.value);
+        _earth.updateTransform();
+        _scene.update();
+        // }
+      });
 
     _earthDoubleTapSizeController = AnimationController(
       duration: Duration(milliseconds: 300),
@@ -151,11 +154,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     //   }
     // });
 
-    _earthOpacityController = AnimationController(
-        duration: Duration(milliseconds: 400),
-        vsync: this)..addListener(() {
-
-    })..forward();
+    _earthOpacityController =
+        AnimationController(duration: Duration(milliseconds: 400), vsync: this)
+          ..addListener(() {})
+          ..forward();
 
     _earthRotationY = _controller.value * 360;
 
@@ -229,24 +231,22 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           // _earthOpacityController.forward();
                           isTapZoom = false;
 
-                            _controller.stop();
-                            if (isTap) {
-                              _earthSizeUpAnimationController.forward(from: 0);
-                                _earthOpacityController.forward();
-                                  setState(() {
-                                    isTap = !isTap;
-                                  });
-                                // });
-                            } else {
-                              _earthSizeAnimationController.forward(from: 0);
-                                _earthOpacityController.reverse().whenComplete(() {
-                                  setState(() {
-                                    isTap = !isTap;
-                                  });
-                                });
-
-                            }
-
+                          _controller.stop();
+                          if (isTap) {
+                            _earthSizeUpAnimationController.forward(from: 0);
+                            _earthOpacityController.forward();
+                            setState(() {
+                              isTap = !isTap;
+                            });
+                            // });
+                          } else {
+                            _earthSizeAnimationController.forward(from: 0);
+                            _earthOpacityController.reverse().whenComplete(() {
+                              setState(() {
+                                isTap = !isTap;
+                              });
+                            });
+                          }
                         },
 
                         onPanCancel: () {},
@@ -372,35 +372,18 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                               children: [
                                 AnimatedBuilder(
                                   animation: _earthOpacityController,
-                                  builder: (BuildContext context, Widget? child) {
-                                    return Opacity(opacity: _earthOpacityController.value,
+                                  builder:
+                                      (BuildContext context, Widget? child) {
+                                    return Opacity(
+                                      opacity: _earthOpacityController.value,
                                       child: child,
                                     );
                                   },
                                   child: ClipRRect(
-                                      child: Cube(onSceneCreated: _onSceneCreated)),
+                                      child: Cube(
+                                          onSceneCreated: _onSceneCreated)),
                                 ),
-                                AnimatedSwitcher(
-                                  duration: Duration(milliseconds: 600),
-                                  // transitionBuilder: (Widget child,
-                                  //     Animation<double> animation) {
-                                  //   return ScaleTransition(
-                                  //       scale: animation, child: child);
-                                  // },
-                                  child: isTap
-                                      ? ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(0),
-                                          child: PhotoView(
-                                            initialScale: 0.18,
-                                            backgroundDecoration: BoxDecoration(
-                                                color: Colors.transparent),
-                                            imageProvider: AssetImage(
-                                                "res/3d_model/flutter8_map.png"),
-                                          ),
-                                        )
-                                      : const SizedBox(),
-                                ),
+                                mapOfEarth(context, isTap),
                               ],
                             )),
                       ),
@@ -448,6 +431,61 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           Positioned(bottom: 0, left: 0, child: bottomNavBar(context)),
         ],
       ),
+    );
+  }
+
+  Widget mapOfEarth(BuildContext context, bool isTap) {
+    return AnimatedSwitcher(
+      duration: Duration(milliseconds: 600),
+      // transitionBuilder: (Widget child,
+      //     Animation<double> animation) {
+      //   return ScaleTransition(
+      //       scale: animation, child: child);
+      // },
+      child: isTap
+          ? Container(
+            child: Stack(
+              children: [
+                Container(
+                  // height: 200,
+                  padding: EdgeInsets.only(bottom: 50),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(0),
+                      child: PhotoView(
+                        initialScale: 0.16,
+                        backgroundDecoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [
+                      backImageGradientFirst,
+                          backImageGradientSecond,
+                          ]),
+                  ),
+                        imageProvider: AssetImage("res/3d_model/flutter8_cut_transparent.png"),
+                      ),
+                    ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    width: MediaQuery.of(context).size.width - 32,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: bottomNavBarMapColor,
+                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(13)),
+                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SvgPicture.asset("res/bihance_pic/stats_tree.svg"),
+                        SvgPicture.asset("res/bihance_pic/planted_trees.svg"),
+                      ],
+                    ),
+                    ),
+                  ),
+              ],
+            ),
+          )
+          : const SizedBox(),
     );
   }
 

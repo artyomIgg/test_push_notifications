@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_cube/flutter_cube.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:math' as math;
@@ -53,6 +54,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   late AnimationController _earthSizeUpAnimationController;
   late AnimationController _earthDoubleTapSizeController;
   late AnimationController _earthOpacityController;
+  late AnimationController _mapSizeAnimationController;
+  late AnimationController _mapOpacityAnimationController;
   late Object _earth;
   late Scene _scene;
   late double _earthRotationY;
@@ -131,6 +134,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         _scene.update();
         // }
       });
+
+    _mapSizeAnimationController =
+        AnimationController(duration: Duration(milliseconds: 300), vsync: this)
+          ..reverse();
+
+    _mapOpacityAnimationController =
+        AnimationController(duration: Duration(milliseconds: 300), vsync: this)
+          ..reverse();
 
     _earthDoubleTapSizeController = AnimationController(
       duration: Duration(milliseconds: 300),
@@ -235,6 +246,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           if (isTap) {
                             _earthSizeUpAnimationController.forward(from: 0);
                             _earthOpacityController.forward();
+                            // Future.delayed(Duration(milliseconds: 800)).then((value) {
+                            //   _mapSizeAnimationController.reverse();
+                            // });
                             setState(() {
                               isTap = !isTap;
                             });
@@ -242,6 +256,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           } else {
                             _earthSizeAnimationController.forward(from: 0);
                             _earthOpacityController.reverse().whenComplete(() {
+                              _mapSizeAnimationController
+                                ..value = 0
+                                ..stop();
+                              Future.delayed(Duration(milliseconds: 200))
+                                  .then((value) {
+                                _mapSizeAnimationController.forward(from: 0);
+                              });
+
                               setState(() {
                                 isTap = !isTap;
                               });
@@ -444,47 +466,64 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       // },
       child: isTap
           ? Container(
-            child: Stack(
-              children: [
-                Container(
-                  // height: 200,
-                  padding: EdgeInsets.only(bottom: 50),
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(0),
-                      child: PhotoView(
-                        initialScale: 0.16,
-                        backgroundDecoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [
-                      backImageGradientFirst,
-                          backImageGradientSecond,
-                          ]),
-                  ),
-                        imageProvider: AssetImage("res/3d_model/flutter8_cut_transparent.png"),
-                      ),
-                    ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    width: MediaQuery.of(context).size.width - 32,
-                    height: 50,
+              child: Stack(
+                children: [
+                  Container(
                     decoration: BoxDecoration(
-                      color: bottomNavBarMapColor,
-                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(13)),
-                      ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SvgPicture.asset("res/bihance_pic/stats_tree.svg"),
-                        SvgPicture.asset("res/bihance_pic/planted_trees.svg"),
-                      ],
+                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+                      gradient: LinearGradient(colors: [
+                        backImageGradientFirst,
+                        backImageGradientSecond,
+                      ]),
                     ),
+                    child: AnimatedBuilder(
+                      animation: _mapSizeAnimationController,
+                      builder: (BuildContext context, Widget? child) {
+                        return Transform.scale(
+                          scale: _mapSizeAnimationController.value,
+                          child: child,
+                        );
+                      },
+                      child: Container(
+                        // height: 200,
+                        padding: EdgeInsets.only(bottom: 50),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(0),
+                          child: PhotoView(
+                            initialScale: 0.16,
+                            backgroundDecoration: BoxDecoration(
+                              color: Colors.transparent,
+                            ),
+                            imageProvider: AssetImage(
+                                "res/3d_model/flutter8_cut_transparent.png"),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-              ],
-            ),
-          )
+                  Positioned(
+                    bottom: 0,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      width: MediaQuery.of(context).size.width - 32,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: bottomNavBarMapColor,
+                        borderRadius:
+                            BorderRadius.vertical(bottom: Radius.circular(13)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SvgPicture.asset("res/bihance_pic/stats_tree.svg"),
+                          SvgPicture.asset("res/bihance_pic/planted_trees.svg"),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
           : const SizedBox(),
     );
   }

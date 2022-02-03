@@ -50,11 +50,13 @@ dependencies:
   matrix_gesture_detector: ^0.1.0
   photo_view: ^0.13.0
   flutter_svg: ^1.0.3
+  flutter_launcher_icons: ^0.9.2
   flutter_cube:
     path: ./flutter_cube_0.1.1_override
 
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.9.2"
   flutter_test:
     sdk: flutter
 
@@ -64,6 +66,12 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^1.0.0
+
+flutter_icons:
+  ios: true
+  android: true
+  image_path_ios: "res/bihance_pic/green_world_icon.png"
+  image_path_android: "res/bihance_pic/green_world_icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

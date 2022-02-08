@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: "SFProDisplay"),
-      home: SafeArea(child: Home()),
+      home: Home(),
     );
   }
 }
@@ -204,11 +204,19 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: new AppBar(
+        // title: new Text(widget.title),
+        toolbarHeight: 0,
+        shadowColor: Colors.transparent,
+        backgroundColor: backgroundColor,
+        brightness: Brightness.light, // or use Brightness.dark
+      ),
       body: Stack(
         children: [
           Container(
             height: double.infinity,
             width: double.infinity,
+            // padding: EdgeInsets.only(top: 46),
             color: backgroundColor,
             child: Center(
               child: SingleChildScrollView(
@@ -470,7 +478,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+                      borderRadius: BorderRadius.all(Radius.circular(16)),
                       gradient: LinearGradient(colors: [
                         backImageGradientFirst,
                         backImageGradientSecond,
